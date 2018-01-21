@@ -22,26 +22,35 @@ I tried to minimize dependecies on anything outside of basic shell tools.
 * BYTESENT - bytes send (MB sent)
 * DOGEWALLET - public address of the wallet you specified with the script's -w option 
 
+## Help text:
+
+usage:
+```
+node_stat.sh -d <dir> [-o <file>] [-t <file>] [-w <public address>]
+```
 where:
-    -d  Required!  provide the full path to your dogecoin install.
+*-d  Required!  provide the full path to your dogecoin install.
         Specified dir should be parent of bin/
         Ex.: /home/shibe/dogecoin-1.10.0
         default: none
-    -o  file location of desired output file.
+*-o  file location of desired output file.
         Tip: should probably be somewhere your webserver can serve it.
         Ex.: /var/www/html/stats.html
         default: no file; print to STDOUT
-    -t  file location of HTML input template.
+*-t  file location of HTML input template.
         Ex.: /home/shibe/node_stats_template.html
         default: use the internally provided default template from the script
-    -w  the public address of your dogecoin wallet.
+ *-w  the public address of your dogecoin wallet.
         The idea is the use this for advertising your wallet address if you're
         soliciting tips/support for running your node
         default: none
+  *-h print the script's help text
 
-example entry in crontab to run every 2 minutes using the default template:
-*/2 * * * * $(basename "$0") -d /home/shibe/dogecoin-1.10.0/ -o ~/public_html/doge.is.just.plain.cool/html/index.html -w DGup9xDx8y1ypytA3btuUdLe6368oEVwhU
-
+### Example crontab entry
+to run every 2 minutes using the default template:
+```
+*/2 * * * * ~/node_stat.sh -d /home/shibe/dogecoin-1.10.0/ -o ~/public_html/doge.is.just.plain.cool/html/index.html -w DGup9xDx8y1ypytA3btuUdLe6368oEVwhU
+```
 by: 
 Todd Williams
 tcwill@1dot0.io
