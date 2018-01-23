@@ -17,6 +17,7 @@ DOGECONN - Current number of connections reported by dogecoin
 BYTERCVD - bytes recieved (MB received)
 BYTESENT - bytes send (MB sent)
 DOGEWALLET - public address of the wallet you specified with the script's -w option 
+DOGEHOURS - number of hours the dogecoind process has been running on this host
 
 where:
     -d  Required!  provide the full path to your dogecoin install.
@@ -98,6 +99,8 @@ BYTERCVD=$( <<< "${GETNETSTAT}" grep totalbytesrecv | awk -F ':' '{print $2}' | 
 MBSENT=$( expr $BYTESENT / 1048576 )
 MBRCVD=$( expr $BYTERCVD / 1048576 )
 
+SECRUNNING=$(DPID=`pgrep dogecoind`; ps -o etimes= -p "${DPID}")
+HRSRUNNING=$( expr $SECRUNNING / 3600 )
 
 # input html Template
 # this template can contain the variables listed in the help for the script
@@ -106,6 +109,7 @@ MBRCVD=$( expr $BYTERCVD / 1048576 )
 if [ $USEDEFAULT = false ]; then # OK, we've got a template
   PROVIDEDTEMPLATE=`cat $TEMPLATEFILE` # read in the template
 fi
+
 
 ## provide a default HTML template to use in case none specified on commandline
 DEFAULTTEMPLATE="<html>
@@ -126,6 +130,7 @@ body {
 <h1>very facts:</h1>
 <ul>
 <li>last update: DOGEUPDATE</li>
+<li>dogecoin running for: DOGEHOURS hrs</li>
 <li>so height: DOGEBLOCK</li>
 <li>such connections: DOGECONN</li>
 <li>bites recieved: BYTERCVD</li> 
@@ -147,13 +152,21 @@ if $USEDEFAULT; then
     DEFAULTTEMPLATE=$( <<< "${DEFAULTTEMPLATE}" grep -v "DOGEWALLET"  ) # no wallet specified, so rip the line that includes the DOGEWALLET var
   fi
   INSERTED=$( <<< "${DEFAULTTEMPLATE}" sed -e "s/DOGECONN/${DOGECONN}/g" \
-              -e "s/DOGEBLOCK/${DOGEBLOCK}/g" -e "s/DOGEUPDATE/${LASTUPDATE}/g" -e "s/DOGEWALLET/${WALLET}/g" \
-              -e "s/BYTERCVD/${BYTERCVD} \(${MBRCVD}MB\)/g" -e "s/BYTESENT/${BYTESENT} \(${MBSENT}MB\)/g"  
+              -e "s/DOGEBLOCK/${DOGEBLOCK}/g" \
+              -e "s/DOGEUPDATE/${LASTUPDATE}/g" \
+              -e "s/DOGEWALLET/${WALLET}/g" \
+              -e "s/BYTERCVD/${BYTERCVD} \(${MBRCVD}MB\)/g" \
+              -e "s/BYTESENT/${BYTESENT} \(${MBSENT}MB\)/g"  \
+              -e "s/DOGEHOURS/${HRSRUNNING}/g"
             )
 else  # you're not using the default... because you specified a template to read in
   INSERTED=$( <<< "${PROVIDEDTEMPLATE}" sed -e "s/DOGECONN/${DOGECONN}/g" \
-              -e "s/DOGEBLOCK/${DOGEBLOCK}/g" -e "s/DOGEUPDATE/${LASTUPDATE}/g" -e "s/DOGEWALLET/${WALLET}/g" \
-              -e "s/BYTERCVD/${BYTERCVD} \(${MBRCVD}MB\)/g" -e "s/BYTESENT/${BYTESENT} \(${MBSENT}MB\)/g"  
+              -e "s/DOGEBLOCK/${DOGEBLOCK}/g" \
+              -e "s/DOGEUPDATE/${LASTUPDATE}/g" \
+              -e "s/DOGEWALLET/${WALLET}/g" \
+              -e "s/BYTERCVD/${BYTERCVD} \(${MBRCVD}MB\)/g" \
+              -e "s/BYTESENT/${BYTESENT} \(${MBSENT}MB\)/g" \
+              -e "s/DOGEHOURS/${HRSRUNNING}/g" 
             )
 fi
 

@@ -21,6 +21,7 @@ I tried to minimize dependecies on anything outside of basic shell tools.
 * BYTERCVD - bytes recieved (MB received)
 * BYTESENT - bytes send (MB sent)
 * DOGEWALLET - public address of the wallet you specified with the script's -w option 
+* DOGEHOURS - number of hours the dogecoind process has been running
 
 ## Help text:
 
